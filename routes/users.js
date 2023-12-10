@@ -4,3 +4,5 @@ var usersRouter = express.Router();
 
 usersRouter.get('/', userController.getUsers);
 usersRouter.post('/', userController.addUser);
+
+export default usersRouter;
