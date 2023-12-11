@@ -7,12 +7,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id        Int @id @default(autoincrement())
-  username  String 
-  email     String 
+model AdminUsers {
+  id        Int    @id @default(autoincrement())
+  role Role @default(ADMIN)
+  profile Profile?
+}
+
+model MusicianUser {
+  id Int @id @default(autoincrement())
+  role Role @default(MUSICIAN)
+  profile MusicProfile?
+}
+
+model MusicProfile {
+  id Int @id @default(autoincrement())
+  username  String
+  email     String
   firstname String
   lastname  String
   password  String
   category  String
+
+  MusicID Int @unique
+  user MusicianUser? @relation(fields: [MusicID],references: [id])
+}
+model Posts {
+  post_ID     Int    @id
+  content     String
+  date_posted String
+  reacts      String
+}
+
+model Profile {
+  id Int @id @default(autoincrement())
+  username  String
+  email     String
+  firstname String
+  lastname  String
+  password  String
+  category  String
+
+  AdminID Int @unique
+  user AdminUsers? @relation(fields: [AdminID],references: [id])
+  }
+
+enum Role {
+  ADMIN
+  MUSICIAN
+  EVENT_ORG 
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  username String
+  password String 
+}
+
+model UserProfile {
+  userID Int @id @default(autoincrement())
+  role String
 }
