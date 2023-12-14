@@ -7,49 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model AdminUsers {
-  id        Int    @id @default(autoincrement())
-  role Role @default(ADMIN)
-  profile Profile?
+model Users {
+  id        Int      @id @default(autoincrement())
+  role      Role?
+  profile   Profile?
 }
 
-model MusicianUser {
-  id Int @id @default(autoincrement())
-  role Role @default(MUSICIAN)
-  profile MusicProfile?
-}
-
-model MusicProfile {
-  id Int @id @default(autoincrement())
-  username  String
-  email     String
-  firstname String
-  lastname  String
-  password  String
-  category  String
-
-  MusicID Int @unique
-  user MusicianUser? @relation(fields: [MusicID],references: [id])
-}
 model Posts {
-  post_ID     Int    @id
-  content     String
-  date_posted String
-  reacts      String
+  post_ID   Int     @id @default(autoincrement())
+  content   String
+  profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId Int?
 }
 
-model Profile {
-  id Int @id @default(autoincrement())
-  username  String
-  email     String
-  firstname String
-  lastname  String
-  password  String
-  category  String
+// model Profile {
+//   id Int @id @default(autoincrement())
+//   username  String
+//   email     String
+//   firstname String
+//   lastname  String
+//   password  String
+//   category  String
 
-  AdminID Int @unique
-  user AdminUsers? @relation(fields: [AdminID],references: [id])
-  }
+//   AdminID Int? @unique
+//   user Users? @relation(fields: [AdminID],references: [id])
+//   }
 
 enum Role {
   ADMIN
@@ -57,13 +39,29 @@ enum Role {
   EVENT_ORG 
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  username String
-  password String 
-}
+// enum Category {
+//   MUSICIAN
+//   EVENT_ORGANIZER
+// }
 
-model UserProfile {
-  userID Int @id @default(autoincrement())
-  role String
+// model Posts {
+//   post_ID   Int     @id @default(autoincrement())
+//   content   String
+
+//   profile   Profile @relation(fields: [profileId], references: [id])
+//   profileId Int
+// }
+
+model Profile {
+  id         Int    @id @default(autoincrement())
+  username   String
+  email      String
+  firstname  String
+  lastname   String
+  password   String
+  category   String
+
+  AdminID    Int?   @unique
+  user       Users? @relation(fields: [AdminID], references: [id])
+  posts      Posts[]
 }

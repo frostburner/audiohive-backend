@@ -8,6 +8,7 @@ import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
 
 import usersRouter from "./routes/users.js";
+import postsRouter from "./routes/posts.js";
 
 
 const __filename = fileURLToPath(import.meta.url)
@@ -26,6 +27,7 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/users", usersRouter)
+app.use("/posts", postsRouter)
 
 const server = app.listen(port, () => 
 console.log("🚀 Server is running. Server: " + port));
