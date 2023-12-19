@@ -20,18 +20,6 @@ model Posts {
   profileId Int?
 }
 
-// model Profile {
-//   id Int @id @default(autoincrement())
-//   username  String
-//   email     String
-//   firstname String
-//   lastname  String
-//   password  String
-//   category  String
-
-//   AdminID Int? @unique
-//   user Users? @relation(fields: [AdminID],references: [id])
-//   }
 
 enum Role {
   ADMIN
@@ -39,18 +27,6 @@ enum Role {
   EVENT_ORG 
 }
 
-// enum Category {
-//   MUSICIAN
-//   EVENT_ORGANIZER
-// }
-
-// model Posts {
-//   post_ID   Int     @id @default(autoincrement())
-//   content   String
-
-//   profile   Profile @relation(fields: [profileId], references: [id])
-//   profileId Int
-// }
 
 model Profile {
   id         Int    @id @default(autoincrement())
@@ -64,4 +40,27 @@ model Profile {
   AdminID    Int?   @unique
   user       Users? @relation(fields: [AdminID], references: [id])
   posts      Posts[]
+}
+
+model Merch {
+  id Int @id @default(autoincrement())
+  merchName String
+  merchType String 
+  merchCost Float  
+  merchQty Float
+}
+
+
+model Tickets {
+  id Int @id @default(autoincrement())
+  ticketName String 
+  ticketType String 
+  ticketCost Float 
+  ticketQty Float 
+}
+
+model Events {
+  id Int @id @default(autoincrement())
+  eventName String
+  eventDate String 
 }

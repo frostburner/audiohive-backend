@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+//ADMIN SIDE FUNCTIONALITIES 
+
 //GET User Function
 async function getUsers(req,res){
     try {
@@ -53,26 +55,78 @@ async function addUser(req, res, next) {
   }
 
 
- 
 
-//DELETE User Function
-async function deleteUser(res, req, next){
-    const { id } = req.body;
+// DELETE User Function
+async function deleteUser(req, res, next) {
+  const { id } = req.body;
 
-    try {
-        const deletedUser = await prisma.users.delete({
-            where: {
-                id: id,
-            },
-        });
-
-        res.json(deletedUser);
-    } catch (err){
-        console.log("Failed to delete User", err);
-        res.status(500).json({error: "Failed to delete user."});
+  try {
+    if (!id) {
+      return res.status(400).json({ error: 'User ID is required.' });
     }
+
+    const deletedUser = await prisma.users.delete({
+      where: {
+        id: id
+      },
+      select: {
+        profile: {
+          select: {
+            username: true
+          }
+        }
+      }
+    });
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    res.json({ message: 'User deleted.', username: deletedUser.profile.username });
+  } catch (err) {
+    console.log('Failed to delete User', err);
+    res.status(500).json({ error: 'Failed to delete user.' });
+  }
 }
 
+
+// UPDATE User Function
+async function updateUser(req, res, next) {
+  const { id, role, profile } = req.body;
+  const { username, email, firstname, lastname, password, category } = profile;
+
+  try {
+    const updatedUser = await prisma.users.update({
+      where: {
+        id: id
+      },
+      data: {
+        profile: {
+          update: {
+            username,
+            email,
+            firstname,
+            lastname,
+            password,
+            category
+          }
+        },
+        role
+      }
+    });
+
+    res.status(200).json({ message: 'User updated.', user_ID: updatedUser.id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error' });
+  }
+}
+
+
+
+//END OF ADMIN FUNCTIONALITIES 
+
+//REGISTRATION FUNCTION 
 async function registerUser(req, res, next) {
   const { username, email, firstname, lastname, password, category, role } = req.body;
 
@@ -105,6 +159,8 @@ async function registerUser(req, res, next) {
   }
 }
 
+
+//LOG IN FUNCTION
 async function loginUser(req, res, next) {
   const { username, password } = req.body;
 
@@ -112,7 +168,8 @@ async function loginUser(req, res, next) {
     const user = await prisma.users.findFirst({
       where: {
         profile: {
-          username,
+          username: username,
+          password: password,
         },
       },
       include: {
@@ -121,7 +178,7 @@ async function loginUser(req, res, next) {
     });
 
     // Check if the user exists and if the provided password matches
-    if (!user || user.profile.password !== password) {
+    if (!user) {
       return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
@@ -135,7 +192,6 @@ async function loginUser(req, res, next) {
 
 
 
-
-const userController = { getUsers, addUser , deleteUser, registerUser, loginUser}
+const userController = { getUsers, addUser , deleteUser, updateUser, registerUser, loginUser}
 
 export default userController;

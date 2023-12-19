@@ -1,26 +1,19 @@
 import { PrismaClient } from "@prisma/client";
-const prisma = PrismaClient();
+import usersSeed from "./usersSeed";
 
-async function userSeed(){
-  // const password = "1234";
+const prisma = new PrismaClient();
 
+async function runSeeds(){
   try {
-    const deleteProfile = prisma.profile.deleteMany()
-    const deleteUsers = prisma.adminusers.deleteMany()
-    await prisma.$transaction([deleteProfile, deleteUsers])
-    // const userData = [];
+    const seed1 = await usersSeed();
 
-    // for (const user of userData) {
-    //   await prisma.user.create({
-    //     data: user,
-    //   });
-    // }
-    //   console.log("User has been created.");
+    if (seed1) {
+      console.log("Seeding successful")
+    }
   } catch (err) {
-    console.error("Error in seed file", err);
-  } finally {
-    await prisma.$disconnect();
+    console.log("error")
   }
 }
 
-export default userSeed();
+
+runSeeds();

@@ -9,6 +9,9 @@ import { fileURLToPath } from "url";
 
 import usersRouter from "./routes/users.js";
 import postsRouter from "./routes/posts.js";
+import merchRouter from "./routes/merch.js";
+import ticketRouter from "./routes/ticket.js";
+
 
 
 const __filename = fileURLToPath(import.meta.url)
@@ -26,8 +29,11 @@ app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/users", usersRouter)
-app.use("/posts", postsRouter)
+app.use("/api/users", usersRouter)
+app.use("/api/posts", postsRouter)
+app.use("/api/merch", merchRouter)
+app.use("/api/tickets", ticketRouter)
+
 
 const server = app.listen(port, () => 
 console.log("🚀 Server is running. Server: " + port));
